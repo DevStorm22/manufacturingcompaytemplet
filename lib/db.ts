@@ -1,31 +1,38 @@
 import mongoose, { Mongoose } from "mongoose";
 
+const MONGODB_URI = process.env.MONGODB_URI as string;
+if(!MONGODB_URI)
+{
+    throw new Error("MONGO_URI is not defined");
+}
+
 declare global {
     var mongoose: {
         conn: Mongoose | null;
         promise: Promise<Mongoose> | null;
     } | undefined;
 }
-
-const MONGO_URI = process.env.DATABASE_URL as string;
-if(!MONGO_URI)
-{
-    throw new Error("MONGO_URI is not defined");
-}
+    
 let cached = global.mongoose;
+
 if(!cached)
 {
     cached = global.mongoose = {conn: null, promise: null};
 }
-export async function connectDB()
-{
+
+export async function connectDB(): Promise<Mongoose>{
     if(!cached) {
         cached = global.mongoose = {conn: null, promise: null};
     }
-    if(cached.conn) return cached.conn;
+    if(cached.conn) {
+        console.log("MongoDB Connected");
+        return cached.conn;
+    }
     if(!cached.promise)
     {
-        cached.promise = mongoose.connect(MONGO_URI).then((mongoose) => mongoose);
+        cached.promise = mongoose.connect(MONGODB_URI, {
+            bufferCommands: false
+        });
     }
     cached.conn = await cached.promise;
     return cached.conn;

@@ -1,10 +1,8 @@
 "use client";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 export default function AdminLoginPage()
 {
-    const router = useRouter();
     const[email, setEmail] = useState("");
     const[password, setPassword] = useState("");
     const[error, setError] = useState("");
@@ -12,21 +10,24 @@ export default function AdminLoginPage()
 
     const handleSubmit = async(e: React.FormEvent) => {
         e.preventDefault();
-        setError("");
         setLoading(true);
-        const result = await signIn("credentials", {
+        setError("");
+        const res = await signIn("credentials", {
             email,
             password,
             callbackUrl: "/admin/dashboard",
+            redirect: false,
         });
         setLoading(false);
-        if(result?.error)
-        {
-            setError("Invalid email or password");
-            return;
-        }router.push("/admin/dashboard");
-        router.refresh();        
+        
+        if(res?.error) {
+            setError("Invalid Credentials");
+        }
+        else {
+            window.location.href = "/admin/dashboard";
+        }
     };
+    
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 text-black">
             <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-md w-full max-w-sm">

@@ -1,7 +1,8 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { connectDB } from "../../../../lib/db";
-import { Admin } from "../../../../models/Admin";
+import { connectDB } from "@/lib/db";
+import { Admin } from "@/models/Admin";
+import bcrypt from "bcryptjs";
 
 const handler = NextAuth({
   providers: [
@@ -13,18 +14,32 @@ const handler = NextAuth({
       },
       async authorize(credentials) {
         try {
-          if (
-            credentials?.email === "admin@example.com" &&
-            credentials?.password === "admin123"
-          ) {
-            return {
-              id: "1",
-              email: "admin@example.com",
-              role: "admin",
-            };
+          if(!credentials?.email || !credentials?.password) {
+            return null;
           }
-      
-          return null;
+
+          await connectDB();
+          
+          const admin = await Admin.findOne({ email: credentials.email });
+          
+          if(!admin) {
+            return null;
+          }
+          
+          const isValid = await bcrypt.compare (
+            credentials.password, admin.password
+          );
+
+          if(!isValid) {
+            return null;
+          }
+          
+          return {
+            id: admin._id.toString(),
+            email: admin.email,
+            role: admin.role,
+          }
+
         } catch (err) {
           console.error("AUTHORIZE ERROR:", err);
           return null;
