@@ -5,44 +5,22 @@ import { slugify } from "@/lib/slugify";
 
 export async function GET() {
     await connectDB();
-    const services = await Service.find().sort({ createdAt: -1 });
-
+    const services = await Service.find().sort({ createdAt: -1});
     return NextResponse.json(services);
 }
 
 export async function POST(req: Request) {
     await connectDB();
     const body = await req.json();
-    const slug = slugify(body.title);
-    const exists = await Service.findOne({slug});
-    if(exists) {
-        return NextResponse.json({error: "Slug is already defined"}, {status: 400});
+    const {title, description} = body;
+    if(!title || !description) {
+        return NextResponse.json( {message: "Title and Description required!!!"}, { status: 400 } );
     }
-    const service = await Service.create({
-        title: body.title,
-        slug,
-        description: body.description,
-    });
-
-    return NextResponse.json(service, { status: 201 });
-}
-
-export async function PUT(req:Request) {
-    await connectDB();
-    const body = await req.json();
-    const slug = slugify(body.title);
-    const updated = await Service.findByIdAndUpdate(body.id, {
-        title: body.title,
-        slug,
-        description: body.description,
-    },
-    { new: true, });
-    return NextResponse.json(updated);
-}
-
-export async function DELETE(req:Request) {
-    await connectDB();
-    const { id } = await req.json();
-    await Service.findByIdAndDelete(id);
-    return NextResponse.json({ message: "Service deleted successfully", success: true });
+    const slug = slugify(title);
+    const exists = await Service.findOne( { slug } );
+    if(exists) {
+        return NextResponse.json( { message: "Slug already exists!!! "}, { status: 409 });
+    }
+    const service = await Service.create( { title, slug, description, isActive: true } );
+    return NextResponse.json( { message : "New service created!!!" }, { status : 201 } );
 }
