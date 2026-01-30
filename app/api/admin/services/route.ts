@@ -6,7 +6,7 @@ import { slugify } from "@/lib/slugify";
 export async function GET() {
     await connectDB();
     const services = await Service.find().sort({ createdAt: -1});
-    return NextResponse.json(services);
+    return NextResponse.json( { data : services }, { status : 200 } );
 }
 
 export async function POST(req: Request) {
