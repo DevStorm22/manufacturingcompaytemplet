@@ -14,14 +14,14 @@ export default function AdminSidebar() {
     const pathName = usePathname();
 
     return (
-        <aside className="bg-black text-white p-6 space-y-3 m-5">
-            <h2 className="text-xl font-bold mb-10">Admin Panel</h2>
-            <nav className="flex space-y-3">
+        <aside className="bg-black text-white p-2 space-y-3 m-5">
+            <h2 className="text-xl font-bold mb-5">Admin Panel</h2>
+            <nav className="flex flex-wrap mb-5">
                 {links.map((link) => (
                     <Link
                         key={link.href}
                         href={link.href}
-                        className={`p-3 rounded ${pathName === link.href ? "bg-gray-800" : "hover:bg-gray-700"}`}
+                        className={`p-4 rounded ${pathName === link.href ? "bg-gray-800" : "hover:bg-gray-700"}`}
                     >
                         {link.label}
                     </Link>

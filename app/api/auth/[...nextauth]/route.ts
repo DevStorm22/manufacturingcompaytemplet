@@ -20,13 +20,17 @@ const handler = NextAuth({
 
           await connectDB();
           
+          if( credentials.email === "admin@example.com" && credentials.password === "admin123" ) {
+            
+          }
+          
           const admin = await Admin.findOne({ email: credentials.email });
           
           if(!admin) {
             return null;
           }
           
-          const isValid = await bcrypt.compare (
+          const isValid = await bcrypt.compare(
             credentials.password, admin.password
           );
 
@@ -60,7 +64,7 @@ const handler = NextAuth({
       }
       return token;
     },
-    async session({ session, token}) {
+    async session({ session, token }) {
       if (session.user) {
         session.user.role = token.role;
       }
