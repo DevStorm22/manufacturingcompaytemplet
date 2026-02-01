@@ -3,7 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
-export default function DeleteServicePage() {
+export default function DeleteBlogPage() {
   const { id } = useParams();
   const router = useRouter();
 
@@ -15,17 +15,17 @@ export default function DeleteServicePage() {
     try {
       setLoading(true);
 
-      const res = await fetch(`/api/admin/services/${id}`, {
+      const res = await fetch(`/api/admin/blogs/${id}`, {
         method: "DELETE",
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || "Failed to delete service");
+        throw new Error(data.message || "Failed to delete blog");
       }
 
-      router.push("/admin/services");
+      router.push("/admin/blogs");
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -37,11 +37,11 @@ export default function DeleteServicePage() {
     <div className="min-h-screen flex items-center justify-center text-white">
       <div className="w-full max-w-md bg-gray-900 p-6 rounded-lg border border-red-700">
         <h1 className="text-2xl font-bold text-red-500 mb-4 underline">
-          Delete Service
+          Delete blog
         </h1>
 
         <p className="mb-4 text-gray-300">
-          Are you sure you want to delete this service?
+          Are you sure you want to delete this blog?
           <br />
           <span className="text-red-400 font-semibold">
             This action cannot be undone.

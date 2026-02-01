@@ -1,29 +1,55 @@
+import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
-import { slugify } from "@/lib/slugify";
 import { CaseStudy } from "@/models/CaseStudy";
-import { NextRequest, NextResponse } from "next/server";
+import { slugify } from "@/lib/slugify";
 
-export async function GET () {
-    await connectDB();
-    const caseStudies = await CaseStudy.find().sort( { createdAt : -1 } );
-    return NextResponse.json( { data : caseStudies }, { status : 200 } );
+/* GET — all case studies */
+export async function GET() {
+  await connectDB();
+
+  const caseStudies = await CaseStudy.find().sort({ createdAt: -1 });
+
+  return NextResponse.json(
+    { data: caseStudies },
+    { status: 200 }
+  );
 }
 
-export async function POST(req : NextRequest) {
-    await connectDB();
-    const body = await req.json();
-    const { title, description, content, industry } = body;
-    
-    if ( !title || !description || !industry || !content) {
-        return NextResponse.json( { message : "title, description, content, industry, are required" }, { status : 400 } );
-    }
-    
-    const slug = slugify(title);
-    
-    const exits = await CaseStudy.findOne( { slug } );
-    if( exits ) {
-        return NextResponse.json( { message : "Slug already exits!!!" }, { status : 409 } );
-    }
-    
-    return NextResponse.json( { message : "New case study added!!!" }, { status : 200 } );
+/* POST — create case study */
+export async function POST(req: Request) {
+  await connectDB();
+
+  const body = await req.json();
+  const { title, shortDescription, content, coverImage, isActive } = body;
+
+  if (!title || !shortDescription || !content) {
+    return NextResponse.json(
+      { message: "Title, short description and content are required" },
+      { status: 400 }
+    );
+  }
+
+  const slug = slugify(title);
+
+  const exists = await CaseStudy.findOne({ slug });
+  if (exists) {
+    return NextResponse.json(
+      { message: "Case study with this title already exists" },
+      { status: 409 }
+    );
+  }
+
+  await CaseStudy.create({
+    title,
+    slug,
+    shortDescription,
+    content,
+    coverImage,
+    isActive: typeof isActive === "boolean" ? isActive : true,
+  });
+
+  return NextResponse.json(
+    { message: "Case study created successfully" },
+    { status: 201 }
+  );
 }

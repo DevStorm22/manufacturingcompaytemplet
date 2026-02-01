@@ -1,69 +1,36 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 
-const BlogSchema = new Schema( {
-        title : {
-            type : String,
-            required : true,
-            unique : true,
-        },
-        slug : {
-            type : String,
-            required : true,
-            unique : true,
-        },
-        description : {
-            type : String,
-            required : true,
-        },
-        content : {
-            type : String,
-            required : true,
-        },
-        coverImage : {
-            type : String,
-            required : true,
-        },
-        tags : {
-            type : [ String ],
-            required : true,
-        },
-        category : {
-            type : String,
-        },
-        author : {
-            type : String,
-        },
-        publishedDate : {
-            type : Date,
-            required : true,
-        },
-        isActive : {
-            type : Boolean,
-            required : true,
-        },
-        seoTitle : {
-            type : String,
-            required : true,
-            default : function() {
-                return this.title;
-            },
-        },
-        seoDescription : {
-            type : String,
-            required : true,
-            default : function() {
-                return this.description;
-            },
-        },
-        seoKeyword : {
-            type : [String],
-        },
-        views : {
-            type : Number,
-        },
-    }, {
-        timestamps : true,
+const BlogSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+      trim: true,
     },
+
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+
+    excerpt: {
+      type: String,
+      required: true,
+    },
+
+    content: {
+      type: String,
+      required: true,
+    },
+
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  { timestamps: true }
 );
 
-export const Blog = mongoose.models.BlogSchema || mongoose.model( "Blog", BlogSchema );
+export const Blog =
+  mongoose.models.Blog || mongoose.model("Blog", BlogSchema);

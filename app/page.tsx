@@ -1,65 +1,117 @@
-import Image from "next/image";
-
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
+    <main className="bg-black text-white">
+      
+      {/* HERO SECTION */}
+      <section className="min-h-screen flex flex-col items-center justify-center text-center px-6">
+        <h1 className="text-5xl font-bold mb-6">
+          Build. Scale. Launch.
+        </h1>
+        <p className="text-gray-400 max-w-2xl mb-8">
+          A modern full-stack platform built with Next.js, MongoDB, and industry-standard
+          backend architecture to manage services, products, blogs, and case studies.
+        </p>
+        <div className="flex gap-4">
           <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/admin"
+            className="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl font-semibold"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
+            Admin Dashboard
           </a>
           <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="#services"
+            className="border border-white px-6 py-3 rounded-xl hover:bg-white hover:text-black transition"
           >
-            Documentation
+            Explore Features
           </a>
         </div>
-      </main>
-    </div>
+      </section>
+
+      {/* SERVICES */}
+      <section id="services" className="py-20 px-6 bg-gray-900">
+        <h2 className="text-4xl font-bold text-center mb-12">
+          Services
+        </h2>
+        <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          {["Web Development", "API Design", "Admin Systems"].map((service) => (
+            <div
+              key={service}
+              className="border border-gray-700 p-6 rounded-xl hover:border-blue-600 transition"
+            >
+              <h3 className="text-xl font-semibold mb-3">{service}</h3>
+              <p className="text-gray-400">
+                Scalable, secure and production-ready solutions designed for real-world use.
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CASE STUDIES */}
+      <section className="py-20 px-6 bg-gray-900">
+        <h2 className="text-4xl font-bold text-center mb-12">
+          Case Studies
+        </h2>
+        <div className="max-w-4xl mx-auto space-y-6">
+          {[1, 2].map((item) => (
+            <div
+              key={item}
+              className="border border-gray-700 p-6 rounded-xl hover:border-green-500 transition"
+            >
+              <h3 className="text-xl font-semibold mb-2">
+                Case Study {item}
+              </h3>
+              <p className="text-gray-400">
+                Solving real business problems with clean architecture and scalable backend systems.
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* BLOG */}
+      <section className="py-20 px-6">
+        <h2 className="text-4xl font-bold text-center mb-12">
+          Latest Blogs
+        </h2>
+        <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          {[1, 2, 3].map((item) => (
+            <div
+              key={item}
+              className="border border-gray-700 p-6 rounded-xl hover:border-purple-500 transition"
+            >
+              <h3 className="text-lg font-semibold mb-2">
+                Blog Post {item}
+              </h3>
+              <p className="text-gray-400">
+                Insights on system design, backend patterns, and full-stack development.
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-20 px-6 bg-gradient-to-r from-blue-600 to-purple-600 text-center">
+        <h2 className="text-4xl font-bold mb-4">
+          Ready to Explore the System?
+        </h2>
+        <p className="mb-8 text-white/80">
+          Access the admin dashboard to manage content with full CRUD functionality.
+        </p>
+        <a
+          href="/admin"
+          className="bg-black px-8 py-3 rounded-xl font-semibold hover:bg-gray-900"
+        >
+          Go to Admin Panel
+        </a>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="py-6 text-center text-gray-500 text-sm">
+        © {new Date().getFullYear()} Full-Stack Admin Platform · Built with Next.js & MongoDB
+      </footer>
+
+    </main>
   );
 }

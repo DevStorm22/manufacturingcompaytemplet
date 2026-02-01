@@ -1,72 +1,42 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, models } from "mongoose";
 
-const CaseStudySchema = new Schema( {
-        title : {
-            type : String,
-            required : true,
-            unique : true,
-        },
-        slug : {
-            type : String,
-            required : true,
-            unique : true,
-        },
-        description : {
-            type : String,
-            required : true,
-            unique : true,
-        },
-        content : {
-            type : String,
-            required : true,
-            unique : true,
-        },
-        industry : {
-            type : String,
-            required : true,
-            unique : true,
-        },
-        clientName : {
-            type : String,
-        },
-        featuredImage : {
-            type : String,
-            required : true,
-            unique : true,
-        },
-        gallery : {
-            type : [String],
-        },
-        technologyUsed : {
-            type : [String],
-        },
-        isFeatured : {
-            type : Boolean,
-            required : true,
-            default : false,
-        },
-        isActive : {
-            type : Boolean,
-            required : true,
-            default : true,
-        },
-        seoTitle : {
-            type : String,
-            required : true,
-            unique : true,
-            default : function () {
-                return this.title;
-            },
-        },
-        seoDescription : {
-            type : String,
-            required : true,
-            default: function () {
-                return this.description;
-            },
-        },
+const CaseStudySchema = new Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+      trim: true,
     },
-    { timestamps : true},
+
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+    },
+
+    shortDescription: {
+      type: String,
+      required: true,
+    },
+
+    content: {
+      type: String,
+      required: true,
+    },
+
+    coverImage: {
+      type: String, // URL or path
+      required: false,
+    },
+
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  { timestamps: true }
 );
 
-export const CaseStudy = mongoose.models.CaseStudies || mongoose.model("CaseStudy", CaseStudySchema);
+export const CaseStudy =
+  models.CaseStudy || mongoose.model("CaseStudy", CaseStudySchema);

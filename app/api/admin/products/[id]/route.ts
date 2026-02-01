@@ -1,55 +1,81 @@
-import { connectDB } from "@/lib/db";
-import { slugify } from "@/lib/slugify";
-import { Product } from "@/models/Product";
 import { NextResponse } from "next/server";
+import mongoose from "mongoose";
+import { connectDB } from "@/lib/db";
+import { Product } from "@/models/Product";
+import { slugify } from "@/lib/slugify";
 
-export async function PUT( req : Request, { params } : { params : Promise < { id : string } > }) {
-    
-    // Connecting Database
-    await connectDB();
+export async function GET(req: Request,{params}: {params: Promise<{id: string}>}) {
+  await connectDB();
 
-    // Declaration section
-    const { id } = await params; // Extracting Id from params
-    const body = await req.json(); // Extracting all content of request
-    const { title, description, price, isAvailable } = body; // Destructing the content
-    const updateData: any = {}; // An empty object creation with no type restrictions
-    
-    // Checking for the updations
-    if(title) {
-        updateData.title = title;
-        updateData.slug = slugify(updateData.title);
-    }
-    if (description) {
-        updateData.description = description;
-    }
-    if (price) {
-        updateData.price = price;
-    }
-    if(typeof isAvailable === "boolean") {
-        updateData.isAvailable = isAvailable;
+  const {id} = await params;
+  const product = await Product.findById(id);
+
+  if (!Product) {
+    return NextResponse.json(
+      { message: "Product not found" },
+      { status: 404 }
+    );
+  }
+
+  return NextResponse.json({data : Product}, { status: 200 });
+}
+
+export async function PUT(req: Request,{ params }: { params: Promise<{id: string}>}) {
+  await connectDB();
+
+  const {id} = await params;
+
+  const body = await req.json();
+  const {title, description, isActive} = body;
+
+  const updateData: any = {};
+  if (title) {
+    updateData.title = title;
+    updateData.slug = slugify(title);
+  }
+  if (description) {
+    updateData.description = description;
+  }
+  if (typeof isActive === "boolean") {
+    updateData.isActive = isActive;
+  }
+
+  if (Object.keys(updateData).length === 0) {
+    return NextResponse.json(
+      { message: "No valid fields to update" },
+      { status: 400 }
+    );
+  }
+
+  try {
+    const updatedProduct = await Product.findByIdAndUpdate(id, updateData, { new: true });
+
+    if (!updatedProduct) {
+      return NextResponse.json( { message: "Product not found" }, { status: 404 } );
     }
 
-    // Checking for the PUT request with empty parameters
-    /*
-    Object.keys(array) is used to acces the list of the keys of the array.
-    .length defines the number of keys present in the array (size).
-    */
-    if(Object.keys(updateData).length === 0) {
-        return NextResponse.json( { message : "No valid updates!!!" }, { status : 400 } );
-    }
+    return NextResponse.json( { message : "Product updated successfully!!!" }, { status : 200 } );
+  } catch (error: any) {
+    return NextResponse.json( { message: error.message }, { status: 500 } );
+  }
+}
 
-    // CORE operation (Updation logic)
-    try {
-        const updatedProduct = await Product.findByIdAndUpdate( id, updateData, { new : true } );
+export async function DELETE(req: Request,{ params }: { params: Promise<{id: string}>}) {
+  await connectDB();
 
-        // Checking for product is updated or not
-        if(!updatedProduct) {
-            return NextResponse.json( { message : "Product not found!!!" }, { status : 404 } );
-        }
-        
-        return NextResponse.json( { message : "Product updated successfully!!!" }, { status : 200 } );
-    }
-    catch (error : any) { // Catching error of any type
-        return NextResponse.json( { message : error.message }, { status : 500 } );
-    }
+  const {id} = await params;
+  
+  const deletedProduct = await Product.findByIdAndDelete(id);
+
+  if (!deletedProduct) {
+    return NextResponse.json(
+      { message: "Product not found" },
+      { status: 404 }
+    );
+  }
+
+  return NextResponse.json({
+    success: true,
+    message: "Product deleted successfully",
+  });
 }

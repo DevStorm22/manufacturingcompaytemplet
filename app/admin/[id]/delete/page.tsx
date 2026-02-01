@@ -3,8 +3,8 @@
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
-export default function DeleteServicePage() {
-  const { id } = useParams();
+export default function DeleteAdminPage() {
+  const {id} = useParams();
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
@@ -15,17 +15,17 @@ export default function DeleteServicePage() {
     try {
       setLoading(true);
 
-      const res = await fetch(`/api/admin/services/${id}`, {
+      const res = await fetch(`/api/admins/${id}`, {
         method: "DELETE",
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || "Failed to delete service");
+        throw new Error(data.message || "Failed to delete admin");
       }
 
-      router.push("/admin/services");
+      router.push("/admin/admins");
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -36,23 +36,15 @@ export default function DeleteServicePage() {
   return (
     <div className="min-h-screen flex items-center justify-center text-white">
       <div className="w-full max-w-md bg-gray-900 p-6 rounded-lg border border-red-700">
-        <h1 className="text-2xl font-bold text-red-500 mb-4 underline">
-          Delete Service
-        </h1>
+        <h1 className="text-2xl font-bold text-red-500 mb-4 underline">Delete Admin</h1>
 
         <p className="mb-4 text-gray-300">
-          Are you sure you want to delete this service?
+          Are you sure you want to delete this admin?
           <br />
-          <span className="text-red-400 font-semibold">
-            This action cannot be undone.
-          </span>
+          <span className="text-red-400 font-semibold">This action cannot be undone.</span>
         </p>
 
-        {error && (
-          <p className="bg-red-200 text-red-800 p-2 rounded mb-3">
-            {error}
-          </p>
-        )}
+        {error && <p className="bg-red-200 text-red-800 p-2 rounded mb-3">{error}</p>}
 
         <div className="flex gap-3">
           <button

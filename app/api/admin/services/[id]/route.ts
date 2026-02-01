@@ -4,7 +4,7 @@ import { connectDB } from "@/lib/db";
 import { Service } from "@/models/Service";
 import { slugify } from "@/lib/slugify";
 
-export async function GET(req: Request,{ params }: { params: Promise<{id: string}>}) {
+export async function GET(req: Request,{params}: {params: Promise<{id: string}>}) {
   await connectDB();
 
   const {id} = await params;

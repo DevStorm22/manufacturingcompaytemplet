@@ -1,97 +1,69 @@
 "use client";
 
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
+import Link from "next/link";
 
-export default function ServicePage() {
-    const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "";
+interface Service {
+  _id: string;
+  title: string;
+  description: string;
+  isActive: boolean;
+}
 
-    const router = useRouter();
-    const [services, setServices] = useState<any[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState ("");
-    
-    const fetchServices = async() => {
-        try {
-            setLoading(true);
-            const res = await fetch(`${API_BASE}/api/admin/services`);
-            if(!res.ok) {
-                throw new Error("Failed fetching services");
-            }
-            const resJson = await res.json();
-            setServices(resJson.data || []);
-        }
-        catch (error:any) {
-            setError(error.message);
-        }
-        finally {
-            setLoading(false);
-        }
-    }
+export default function ServicesPage() {
+  const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(true);
 
-    const handleEdit = (id: string) => {
-        router.push(`/admin/services/${id}/edit`);
-    };
+  useEffect(() => {
+    fetch("/api/admin/services")
+      .then((res) => res.json())
+      .then((data) => setServices(data.data))
+      .finally(() => setLoading(false));
+  }, []);
 
-    const handleDelete = async(id: string) => {
-        router.push(`/admin/services/${id}/delete`);
-    }
+  if (loading) {
+    return <p className="text-white text-center">Loading services...</p>;
+  }
 
-    useEffect (() => {
-            fetchServices();
-        }, []
-    );
+  return (
+    <div className="min-h-screen p-6 text-white">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Services</h1>
+        <Link
+          href="/admin/services/new"
+          className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg"
+        >
+          + Add Service
+        </Link>
+      </div>
 
-    if(loading) {
-        return (<p>Loading...</p>);
-    }
-
-    if(error) {
-        return (<p className="text-red-600">{error}</p>)
-    }
-
-    if(!services.length && !loading) {
-        return (<p className="text-white">No services available</p>)
-    }
-
-    return(
-        <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-bold">Services</h1>
-                <Link className="bg-blue-700 text-white px-4 py-2 rounded" href="/admin/services/new">Add Service</Link>
-            </div>
-            <div className="bg-white rounded shadow">
-                <table className="w-full text-left bg-black border-black">
-                    <thead className="border-2 border-white">
-                        <tr className="border-2 border-white">
-                            <th className="p-4 border-2 border-white">Title</th>
-                            <th className="p-4 border-2 border-white">Slug</th>
-                            <th className="p-4 border-2 border-white">Description</th>
-                            <th className="p-4 border-2 border-white">State</th>
-                            <th className="p-4 border-2 border-white">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                            {services.map((service) => (
-                                        <tr key={service._id} className={`text-black ${service.isActive ? "bg-green-50" : "bg-red-50"}`}>
-                                            <td className={`p-3 border-l-2 boder-t-2 border-b-2 border-r-2 border-black border-l-white ${service.isActive ? "text-green-700" : "text-red-700"}`}>{service.title}</td>
-                                            <td className={`p-3 border-2 border-black ${service.isActive ? "text-green-700" : "text-red-700"}`}>{service.slug}</td>
-                                            <td className={`p-3 border-2 border-black ${service.isActive ? "text-green-700" : "text-red-700"}`}>{service.description}</td>
-                                            <td className={`p-3 border-2 border-black ${service.isActive ? "text-green-700" : "text-red-700"}`}>{(service.isActive) ? "Active" : "Not Active"}</td>
-                                            <td className={`p-3 border-r-2 border-l-2 boder-t-2 border-b-2 boder-black border-r-white ${service.isActive ? "text-green-700" : "text-red-700"}`}>
-                                                <span className="flex flex-col gap-5">
-                                                    <button className="text-white bg-blue-700 px-4 py-2" onClick={() => handleEdit(service._id)}>Edit</button>
-                                                    <button className="text-white bg-red-700 px-4 py-2" onClick={() => handleDelete(service._id)}>Delete</button>
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    )
-                                )
-                            }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    );
+      <div className="overflow-x-auto">
+        <table className="w-full border border-gray-700 rounded-lg">
+          <thead className="bg-gray-800">
+            <tr>
+              <th className="p-3 text-left">Title</th>
+              <th className="p-3 text-left">Status</th>
+              <th className="p-3 text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {services.map((service) => (
+              <tr key={service._id} className="border-t border-gray-700">
+                <td className="p-3">{service.title}</td>
+                <td className="p-3">
+                  {service.isActive ? "Active" : "Inactive"}
+                </td>
+                <td className="p-3 text-center space-x-3">
+                  <span className="space-x-5">
+                    <Link href={`/admin/services/${service._id}/edit`} className="text-blue-400 hover:underline">Edit</Link>
+                    <Link href={`/admin/services/${service._id}/delete`} className="text-red-400 hover:underline">Delete</Link>
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
 }
