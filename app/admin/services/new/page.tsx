@@ -37,7 +37,9 @@ export default function CreateServicePage() {
             if(!res.ok) {
                 throw new Error(data.message || "Failed to create service");
             }
-            router
+            setTitle("");
+            setDescription("");
+            alert("Service added successfully!!!");
         } catch(error:any) {
             setError(error.message);
         } finally {

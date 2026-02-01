@@ -4,16 +4,29 @@ import { connectDB } from "@/lib/db";
 import { Service } from "@/models/Service";
 import { slugify } from "@/lib/slugify";
 
-export async function PUT(
-  req: Request,
-  { params }: { params: Promise< { id: string } > }
-) {
+export async function GET(req: Request,{ params }: { params: Promise<{id: string}>}) {
   await connectDB();
 
-  const { id } = await params;
+  const {id} = await params;
+  const service = await Service.findById(id);
+
+  if (!service) {
+    return NextResponse.json(
+      { message: "Service not found" },
+      { status: 404 }
+    );
+  }
+
+  return NextResponse.json({data : service}, { status: 200 });
+}
+
+export async function PUT(req: Request,{ params }: { params: Promise<{id: string}>}) {
+  await connectDB();
+
+  const {id} = await params;
 
   const body = await req.json();
-  const { title, description, isActive } = body;
+  const {title, description, isActive} = body;
 
   const updateData: any = {};
   if (title) {
@@ -45,4 +58,24 @@ export async function PUT(
   } catch (error: any) {
     return NextResponse.json( { message: error.message }, { status: 500 } );
   }
+}
+
+export async function DELETE(req: Request,{ params }: { params: Promise<{id: string}>}) {
+  await connectDB();
+
+  const {id} = await params;
+  
+  const deletedService = await Service.findByIdAndDelete(id);
+
+  if (!deletedService) {
+    return NextResponse.json(
+      { message: "Service not found" },
+      { status: 404 }
+    );
+  }
+
+  return NextResponse.json({
+    success: true,
+    message: "Service deleted successfully",
+  });
 }
